@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './user-schema/user-schema';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto/create-user.dto';
-import { comparePasswords, hashPassword } from 'utils/hash-helper.util';
+import { comparePasswords, hashPassword } from 'src/util/hash-helper.util';
 import { UpdateUserDto } from './dto/update-user.dto/update-user.dto';
 import { ConflictException } from '@nestjs/common';
 
