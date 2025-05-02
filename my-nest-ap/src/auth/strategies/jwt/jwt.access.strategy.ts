@@ -11,7 +11,6 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy , 'jwt-access')
         super({
             jwtFromRequest: (req: Request) => {
               if (!req.cookies?.access_token) {
-                console.log(req.cookies.access_token);
                 throw new UnauthorizedException();
               }
               return req.cookies.access_token;

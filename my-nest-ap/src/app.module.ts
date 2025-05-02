@@ -20,7 +20,7 @@ import { RefreshTokenModule } from './refresh-token/refresh-token.module';
   
   MongooseModule.forRootAsync({
     imports: [ConfigModule],
-    useFactory: async (configService: ConfigService) => ({
+    useFactory: (configService: ConfigService) => ({
       uri: configService.get<string>('MONGO_URI'),
     }),
     inject: [ConfigService]
@@ -30,6 +30,7 @@ import { RefreshTokenModule } from './refresh-token/refresh-token.module';
     driver: ApolloDriver,
     autoSchemaFile: 'schema.graphql',
     playground: true, 
+    context: ({ req, res }) => ({ req, res }) 
   }),
 
   CacheModule.register({
