@@ -1,8 +1,8 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema()
 export class RefreshToken {
-    @Prop()
-    email : string;
+  @Prop()
+  email: string;
 }
-export const RefreshTokenSchema =  SchemaFactory.createForClass(RefreshToken);
+export const RefreshTokenSchema = SchemaFactory.createForClass(RefreshToken);

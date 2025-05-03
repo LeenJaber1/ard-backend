@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './user-schema/user-schema';
 import { Model } from 'mongoose';
@@ -9,42 +13,43 @@ import { ConflictException } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
-    constructor(@InjectModel(User.name) private userModel : Model<User>){}
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-    async getUser(email : string) :  Promise<User> {
-        const user = await this.userModel.findOne({email : email}).exec();
-        if(!user){
-            throw new NotFoundException('user not found');
-        }
-        return user;
+  async getUser(email: string): Promise<User> {
+    const user = await this.userModel.findOne({ email: email }).exec();
+    if (!user) {
+      throw new NotFoundException('user not found');
     }
+    return user;
+  }
 
+  async createUser(createUser: CreateUserDto) {
+    const existingUser = await this.userModel
+      .findOne({ email: createUser.email })
+      .exec();
 
-    async createUser(createUser : CreateUserDto){
-        const existingUser = await this.userModel.findOne({ email: createUser.email }).exec();
-
-        if (existingUser) {
-            throw new ConflictException('User with this email already exists');
-        }
-        const hashedPassword = await hashPassword(createUser.password);
-
-        return this.userModel.create({
-            ...createUser,
-            password: hashedPassword,
-        });
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
     }
+    const hashedPassword = await hashPassword(createUser.password);
 
-    async updateLocation(updateUserDto : UpdateUserDto){
-        const user = await this.getUser(updateUserDto.email);
-        user.location = updateUserDto.location;
-        return await user.save();
-    }
+    return this.userModel.create({
+      ...createUser,
+      password: hashedPassword,
+    });
+  }
 
-    async verifyUser(email : string , password : string){
-        const user = await this.getUser(email);
-        const isValid = await comparePasswords(password, user.password);
-        if(!isValid){
-            throw new UnauthorizedException("wrong credentials");
-        } 
+  async updateLocation(updateUserDto: UpdateUserDto) {
+    const user = await this.getUser(updateUserDto.email);
+    user.location = updateUserDto.location;
+    return await user.save();
+  }
+
+  async verifyUser(email: string, password: string) {
+    const user = await this.getUser(email);
+    const isValid = await comparePasswords(password, user.password);
+    if (!isValid) {
+      throw new UnauthorizedException('wrong credentials');
     }
+  }
 }

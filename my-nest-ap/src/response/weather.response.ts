@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class LocationInfo {
@@ -15,7 +15,7 @@ export class CurrentWeather {
   @Field() humidity: number;
   @Field() uv: number;
   @Field() pressure: number;
-  @Field() windSpeed : number;
+  @Field() windSpeed: number;
   @Field() sunset: string;
   @Field() sunrise: string;
 }
@@ -42,10 +42,9 @@ export class Forecast {
   @Field(() => [HourlyForecast]) hourly: HourlyForecast[];
 }
 
-
 @ObjectType()
-export class WeatherResponse{
-    @Field(() => LocationInfo) location: LocationInfo;
-    @Field(() => CurrentWeather) current: CurrentWeather;
-    @Field(() => Forecast) forecast: Forecast;
+export class WeatherResponse {
+  @Field(() => LocationInfo) location: LocationInfo;
+  @Field(() => CurrentWeather) current: CurrentWeather;
+  @Field(() => Forecast) forecast: Forecast;
 }

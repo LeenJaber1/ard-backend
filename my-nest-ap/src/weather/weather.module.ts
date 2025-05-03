@@ -5,6 +5,6 @@ import { WeatherResolver } from 'src/resolvers/weather.resolver';
 
 @Module({
   providers: [WeatherService, WeatherApiService, WeatherResolver],
-  exports: [WeatherService]
+  exports: [WeatherService],
 })
 export class WeatherModule {}
