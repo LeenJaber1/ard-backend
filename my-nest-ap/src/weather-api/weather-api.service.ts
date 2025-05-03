@@ -19,6 +19,8 @@ export class WeatherApiService {
         days: 6,
       },
     });
+    // disabled because most of the data in the response is not needed and will be formatted into other interfaces
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return response.data;
   }
 }

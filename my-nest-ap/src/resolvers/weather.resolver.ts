@@ -16,7 +16,6 @@ export class WeatherResolver {
     @Args('lat', { nullable: true }) latitude: number,
     @Args('long', { nullable: true }) longtitude: number,
   ): Promise<WeatherResponse> {
-    console.log(city);
     if (city) {
       return this.weatherService.getWeatherByCity(city);
     } else if (latitude !== undefined && longtitude !== undefined) {

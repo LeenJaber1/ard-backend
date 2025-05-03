@@ -3,25 +3,32 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { Strategy } from 'passport-jwt';
+import { RequestWithAccessToken } from 'src/interfaces/jwt-interface';
+import { JwtPayload } from 'src/interfaces/jwt-interface';
 @Injectable()
 export class JwtAccessStrategy extends PassportStrategy(
   Strategy,
   'jwt-access',
 ) {
-  constructor(private configService: ConfigService) {
-    const accessKey = configService.get<string>('JWT_ACCESS_SECRET')!;
+  constructor(configService: ConfigService) {
     super({
       jwtFromRequest: (req: Request) => {
-        if (!req.cookies?.access_token) {
-          throw new UnauthorizedException();
+        const typedReq = req as RequestWithAccessToken;
+
+        if (
+          !typedReq.cookies ||
+          typeof typedReq.cookies.access_token !== 'string'
+        ) {
+          throw new UnauthorizedException('Access token missing or invalid.');
         }
-        return req.cookies.access_token;
+
+        return typedReq.cookies.access_token;
       },
-      secretOrKey: accessKey,
+      secretOrKey: configService.get<string>('JWT_ACCESS_SECRET')!,
     });
   }
 
-  validate(payload: any) {
+  validate(payload: JwtPayload) {
     return { userEmail: payload.sub };
   }
 }

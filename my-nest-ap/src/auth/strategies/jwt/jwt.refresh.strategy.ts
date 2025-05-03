@@ -3,24 +3,32 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { Strategy } from 'passport-jwt';
+import { RequestWithRefreshToken } from 'src/interfaces/jwt-interface';
+import { JwtPayload } from 'src/interfaces/jwt-interface';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
   Strategy,
   'jwt-refresh',
 ) {
-  constructor(private configService: ConfigService) {
-    const refreshKey = configService.get<string>('JWT_REFRESH_SECRET')!;
+  constructor(configService: ConfigService) {
     super({
       jwtFromRequest: (req: Request) => {
-        if (!req.cookies?.refresh_token) throw new UnauthorizedException();
-        return req.cookies.refresh_token;
+        const typedReq = req as RequestWithRefreshToken;
+
+        if (
+          !typedReq.cookies ||
+          typeof typedReq.cookies.refresh_token !== 'string'
+        ) {
+          throw new UnauthorizedException('Refresh token missing or invalid.');
+        }
+
+        return typedReq.cookies.refresh_token;
       },
-      secretOrKey: refreshKey,
+      secretOrKey: configService.get<string>('JWT_REFRESH_SECRET')!,
     });
   }
-
-  validate(payload: any) {
+  validate(payload: JwtPayload) {
     return { userEmail: payload.sub };
   }
 }

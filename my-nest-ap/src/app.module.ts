@@ -11,6 +11,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CacheModule } from '@nestjs/cache-manager';
 import { AuthModule } from './auth/auth.module';
 import { RefreshTokenModule } from './refresh-token/refresh-token.module';
+import { Request, Response } from 'express';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,7 +32,10 @@ import { RefreshTokenModule } from './refresh-token/refresh-token.module';
       driver: ApolloDriver,
       autoSchemaFile: 'schema.graphql',
       playground: true,
-      context: ({ req, res }) => ({ req, res }),
+      context: ({ req, res }: { req: Request; res: Response }) => ({
+        req,
+        res,
+      }),
     }),
     CacheModule.register({
       isGlobal: true,

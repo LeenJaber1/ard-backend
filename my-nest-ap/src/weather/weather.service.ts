@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { WeatherApiResponse } from 'src/interfaces/weather-api-response-interface';
 import {
   CurrentWeather,
   LocationInfo,
@@ -13,17 +14,21 @@ export class WeatherService {
   constructor(private weatherApiService: WeatherApiService) {}
 
   async getWeatherByCity(city: string) {
-    const weather = await this.weatherApiService.getWeatherInfo(city);
+    const weather = (await this.weatherApiService.getWeatherInfo(
+      city,
+    )) as WeatherApiResponse;
     return this.formatResponse(weather);
   }
 
   async getWeatherByCoordinates(latitude: number, longtitude: number) {
     const formatedCoord = latitude + ',' + longtitude;
-    const weather = await this.weatherApiService.getWeatherInfo(formatedCoord);
+    const weather = (await this.weatherApiService.getWeatherInfo(
+      formatedCoord,
+    )) as WeatherApiResponse;
     return this.formatResponse(weather);
   }
 
-  private formatResponse(response: any): WeatherResponse {
+  private formatResponse(response: WeatherApiResponse): WeatherResponse {
     return {
       location: this.getLocationInfo(response),
       current: this.getCurrentWeather(response),
@@ -34,7 +39,7 @@ export class WeatherService {
     };
   }
 
-  private getLocationInfo(response: any): LocationInfo {
+  private getLocationInfo(response: WeatherApiResponse): LocationInfo {
     return {
       name: response.location.name,
       country: response.location.country,
@@ -42,7 +47,7 @@ export class WeatherService {
     };
   }
 
-  private getCurrentWeather(response: any): CurrentWeather {
+  private getCurrentWeather(response: WeatherApiResponse): CurrentWeather {
     const current = response.current;
     const astro = response.forecast.forecastday[0].astro;
 
@@ -59,27 +64,27 @@ export class WeatherService {
     };
   }
 
-  private getDailyForecast(response: any): DailyForecast[] {
+  private getDailyForecast(response: WeatherApiResponse): DailyForecast[] {
     // the response returns the current day + 5 days
-    return response.forecast.forecastday.slice(1).map((day: any) => ({
+    return response.forecast.forecastday.slice(1).map((day) => ({
       date: day.date,
       maxTemp: day.day.maxtemp_c,
       condition: day.day.condition.text,
     }));
   }
 
-  private getHourlyForecast(response: any): HourlyForecast[] {
+  private getHourlyForecast(response: WeatherApiResponse): HourlyForecast[] {
     const targetHours = ['00:00', '12:00', '15:00', '18:00', '21:00'];
 
     return (
       response.forecast.forecastday[0].hour
         //take only the hours that are needed
-        .filter((hour: any) => {
+        .filter((hour) => {
           const time = hour.time.split(' ')[1];
           return targetHours.includes(time);
         })
         //transform each one left to an hourly forecast object
-        .map((hour: any) => ({
+        .map((hour) => ({
           time: hour.time.split(' ')[1],
           temperature: hour.temp_c,
           condition: hour.condition.text,
