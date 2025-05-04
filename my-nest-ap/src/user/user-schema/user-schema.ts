@@ -13,7 +13,7 @@ export class User extends Document {
   password: string;
 
   // either city or coordinates string =  lat,long
-  @Prop({ required: true })
+  @Prop({ required: false })
   location: string;
 }
 

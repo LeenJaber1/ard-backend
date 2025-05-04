@@ -52,4 +52,12 @@ export class UserService {
       throw new UnauthorizedException('wrong credentials');
     }
   }
+
+  async getUserLocation(email: string) {
+    const user = await this.getUser(email);
+    if (user.location) {
+      return user.location;
+    }
+    throw new NotFoundException();
+  }
 }

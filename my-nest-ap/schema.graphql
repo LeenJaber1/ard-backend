@@ -46,5 +46,5 @@ type WeatherResponse {
 }
 
 type Query {
-  getWeatherDetails(city: String, lat: Float, long: Float): WeatherResponse!
+  getWeatherDetails(city: String): WeatherResponse!
 }

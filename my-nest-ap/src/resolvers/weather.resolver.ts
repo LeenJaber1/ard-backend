@@ -13,13 +13,9 @@ export class WeatherResolver {
   @Query(() => WeatherResponse)
   async getWeatherDetails(
     @Args('city', { nullable: true }) city: string,
-    @Args('lat', { nullable: true }) latitude: number,
-    @Args('long', { nullable: true }) longtitude: number,
   ): Promise<WeatherResponse> {
     if (city) {
       return this.weatherService.getWeatherByCity(city);
-    } else if (latitude !== undefined && longtitude !== undefined) {
-      return this.weatherService.getWeatherByCoordinates(latitude, longtitude);
     }
     throw new BadRequestException('must specify location');
   }

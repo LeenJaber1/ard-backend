@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { autoCompleteResponse } from 'src/interfaces/autocomplete-interface';
 import { WeatherApiResponse } from 'src/interfaces/weather-api-response-interface';
 import {
   CurrentWeather,
@@ -20,12 +21,11 @@ export class WeatherService {
     return this.formatResponse(weather);
   }
 
-  async getWeatherByCoordinates(latitude: number, longtitude: number) {
-    const formatedCoord = latitude + ',' + longtitude;
-    const weather = (await this.weatherApiService.getWeatherInfo(
-      formatedCoord,
-    )) as WeatherApiResponse;
-    return this.formatResponse(weather);
+  async getAutoCompleteCities(location: string) {
+    const cities = (await this.weatherApiService.getAutoComplete(
+      location,
+    )) as autoCompleteResponse[];
+    return cities;
   }
 
   private formatResponse(response: WeatherApiResponse): WeatherResponse {
